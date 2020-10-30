@@ -97,7 +97,6 @@ android/build.gradle
 dependencies {
     classpath 'com.google.gms:google-services:4.3.4'
     classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
-    classpath 'com.android.tools.build:gradle:3.4.0'
     classpath 'com.google.firebase:perf-plugin:1.3.2'
 }
 ```
@@ -111,10 +110,10 @@ defaultConfig {
 
 dependencies {
     // ...
-    implementation platform('com.google.firebase:firebase-bom:25.12.0')
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.google.firebase:firebase-perf'
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
+    implementation 'com.google.firebase:firebase-analytics:17.6.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-perf:19.0.9'
     // ...
 
 apply plugin: 'com.google.gms.google-services'
@@ -127,6 +126,8 @@ apply plugin: 'com.google.firebase.firebase-perf'
 ## Localization
 
 ## Util
+
+## Responsiveness
 
 ## Todo
 

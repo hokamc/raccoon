@@ -1,6 +1,4 @@
-import 'package:example/catcher_example.dart';
-import 'package:example/firebase_example.dart';
-import 'package:flutter/material.dart';
+import 'package:example/context_example.dart';
 import 'package:raccoon/raccoon.dart';
 
 void main() {
@@ -9,6 +7,8 @@ void main() {
   Raccoon(RaccoonApp(
     // home: StateExample(),
     // home: CatcherExample(),
-    home: FirebaseExample(),
+    // home: FirebaseExample(),
+    // isDevicePreviewOn: true,
+    routes: [RaccoonRoute(name: '/', builder: (setting, context) => ContextExample())],
   ));
 }

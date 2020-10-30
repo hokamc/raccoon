@@ -4,9 +4,8 @@ import 'dart:isolate';
 
 import 'package:device_info/device_info.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_performance/firebase_performance.dart';
-import 'package:flutter/widgets.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/widgets.dart';
 import 'package:package_info/package_info.dart';
 import 'package:raccoon/raccoon.dart';
 
@@ -21,8 +20,6 @@ class Raccoon {
     WidgetsFlutterBinding.ensureInitialized();
 
     await Firebase.initializeApp();
-
-    FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
 
     _setCrashlytics(main: () async {
       runApp(app);
