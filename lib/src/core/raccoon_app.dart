@@ -3,20 +3,20 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:raccoon/src/core/config.dart';
 import 'package:raccoon/src/nav/route.dart';
-import 'package:raccoon/src/utils/nav_util.dart';
-import 'package:raccoon/src/utils/size_util.dart';
+import 'package:raccoon/src/nav/unknown_page.dart';
 
 class RaccoonApp extends StatelessWidget {
-  /// localization
-  final String translationsPath;
-  final List<Locale> supportedLocales;
-  final Color loadingColor;
-
   /// navigation
   final String initialRoute;
   final RaccoonRoute unknownRoute;
   final Map<String, RaccoonRoute> routes = {};
+
+  /// theme
+  final ThemeData theme;
+  final ThemeData darkTheme;
+  final ThemeMode themeMode;
 
   /// config
   final bool isDevicePreviewOn;
@@ -24,12 +24,12 @@ class RaccoonApp extends StatelessWidget {
   RaccoonApp({
     Key key,
     @required List<RaccoonRoute> routes,
-    this.translationsPath = 'assets/translations',
-    this.supportedLocales = const [Locale('en', 'US')],
+    this.unknownRoute,
+    this.theme,
+    this.darkTheme,
+    this.themeMode,
     this.initialRoute = '/',
     this.isDevicePreviewOn = false,
-    this.loadingColor = Colors.black,
-    this.unknownRoute,
   }) : super(key: key) {
     routes.forEach((route) {
       if (this.routes.containsKey(route.name)) {
@@ -40,11 +40,15 @@ class RaccoonApp extends StatelessWidget {
     });
   }
 
-  MaterialApp app(BuildContext context, {Widget Function(BuildContext, Widget) builder, Locale locale}) {
+  MaterialApp app(BuildContext context, {List<Widget Function(BuildContext, Widget)> builders, Locale locale}) {
     return MaterialApp(
-      navigatorKey: NavUtil.key,
+      theme: theme ?? ThemeData(fontFamily: 'packages/raccoon/Ubuntu'),
+      darkTheme: theme ?? ThemeData(fontFamily: 'packages/raccoon/Ubuntu', brightness: Brightness.dark, accentColor: Colors.orange),
+      themeMode: themeMode,
+      navigatorKey: Config.key,
       navigatorObservers: [
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
+        Config.observer,
       ],
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
@@ -74,59 +78,39 @@ class RaccoonApp extends StatelessWidget {
           },
         );
       },
-      builder: builder,
+      builder: (context, widget) {
+        Widget child = widget;
+        builders.forEach((builder) {
+          child = builder.call(context, child);
+        });
+        return child;
+      },
     );
   }
 
-  Widget child() {
+  @override
+  Widget build(BuildContext context) {
     if (isDevicePreviewOn) {
       return DevicePreview(
         builder: (context) {
           return app(
             context,
-            builder: DevicePreview.appBuilder,
-            locale: DevicePreview.of(context).locale,
+            builders: [
+              DevicePreview.appBuilder,
+            ],
+            locale: DevicePreview.locale(context),
           );
         },
       );
     } else {
       return Builder(
         builder: (context) {
-          return app(context);
+          return app(
+            context,
+            builders: [],
+          );
         },
       );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return EasyLocalization(
-      path: translationsPath,
-      supportedLocales: supportedLocales,
-      preloaderColor: loadingColor,
-      child: child(),
-    );
-  }
-}
-
-class UnknownPage extends StatelessWidget {
-  final String route;
-
-  const UnknownPage({Key key, this.route}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('UNKNOWN ROUTE', style: TextStyle(fontWeight: FontWeight.bold, fontSize: context.font(32), color: Colors.red)),
-            Text(route, style: TextStyle(fontWeight: FontWeight.bold, fontSize: context.font(18))),
-          ],
-        ),
-      ),
-    );
   }
 }

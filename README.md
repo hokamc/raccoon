@@ -1,5 +1,6 @@
 <p align="center">
-<img src="https://image.flaticon.com/icons/png/512/235/235394.png"  width="200" alt="Kubernetes"></a>
+<img src="https://image.flaticon.com/icons/png/512/235/235394.png"  width="200" alt="Raccoon
+"></a>
 </p>
 <h1 align="center">Raccoon</h1>
 
@@ -95,10 +96,9 @@ All of them are integrated into our framework, please follow the set up in order
 android/build.gradle
 ```gradle
 dependencies {
-    classpath 'com.google.gms:google-services:4.3.4'
-    classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
-    classpath 'com.google.firebase:perf-plugin:1.3.2'
-}
+    classpath 'com.google.gms:google-services:4.3.3'
+    classpath 'com.google.firebase:firebase-crashlytics-gradle:2.2.0'
+    // ...  
 ```
 
 android/app/build.gradle
@@ -109,16 +109,13 @@ defaultConfig {
     // ...        
 
 dependencies {
-    // ...
+    // temporary fix for upstream bug from android sdk
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
     implementation 'com.google.android.gms:play-services-basement:17.5.0'
-    implementation 'com.google.firebase:firebase-analytics:17.6.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
-    implementation 'com.google.firebase:firebase-perf:19.0.9'
     // ...
 
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.google.firebase.firebase-perf'
 ```
 
 ## Logger

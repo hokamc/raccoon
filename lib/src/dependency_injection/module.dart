@@ -1,18 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
+import 'package:raccoon/raccoon.dart';
+import 'package:raccoon/src/core/config.dart';
 import 'package:raccoon/src/log/logger.dart';
-import 'package:raccoon/src/dependency_injection/disposable.dart';
 
 part 'di.dart';
 
 abstract class Module extends StatefulWidget {
   final _keys = <String>[];
 
-  Future<void> initial();
+  Future<void> initialize();
+
+  void dispose() {}
 
   Widget build(BuildContext context);
 
   Widget loading(BuildContext context) {
-    return Container();
+    return Container(color: Config.loadingColor);
   }
 
   void bind<T>(T instance) {
@@ -30,7 +35,7 @@ class _ModuleState extends State<Module> {
   @override
   void initState() {
     super.initState();
-    widget.initial().then((_) => setState(() {
+    widget.initialize().then((_) => setState(() {
           isReady = true;
         }));
   }
@@ -41,6 +46,7 @@ class _ModuleState extends State<Module> {
     widget._keys.forEach((key) {
       _unbind(key);
     });
+    widget.dispose();
   }
 
   @override

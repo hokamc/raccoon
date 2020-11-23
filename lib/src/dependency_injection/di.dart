@@ -25,7 +25,7 @@ void _unbind<T>(String key) {
   if (result == null) {
     throw ArgumentError('bean not found, key=$key');
   }
-  if (result is Disposable) {
+  if (result is Bloc) {
     result.dispose();
   }
 

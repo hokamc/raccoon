@@ -3,26 +3,72 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:device_info/device_info.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:package_info/package_info.dart';
-import 'package:raccoon/raccoon.dart';
+import 'package:raccoon/src/core/config.dart';
+import 'package:raccoon/src/core/raccoon_module.dart';
 
 class Raccoon {
-  final RaccoonApp app;
+  final Color loadingColor;
+  final Size designSize;
+  final bool portraitOnly;
+  final bool landscapeOnly;
+  final String storeUrl;
 
-  Raccoon(this.app) {
+  /// child should contain raccoon app
+  final Widget app;
+
+  /// localization
+  final String translationsPath;
+  final List<Locale> supportedLocales;
+
+  Raccoon(
+    this.app, {
+    this.loadingColor,
+    this.designSize,
+    this.storeUrl,
+    this.portraitOnly = false,
+    this.landscapeOnly = false,
+    this.translationsPath = 'assets/translations',
+    this.supportedLocales = const [Locale('en', 'US')],
+  }) {
     _initial();
   }
 
   void _initial() async {
+    if (designSize != null) {
+      Config.thresholdSize = designSize;
+    }
+    if (loadingColor != null) {
+      Config.loadingColor = loadingColor;
+    }
+    if (storeUrl != null) {
+      Config.storeUrl = storeUrl;
+    }
+
     WidgetsFlutterBinding.ensureInitialized();
+
+    List<DeviceOrientation> orientations = [];
+    if (portraitOnly) orientations.addAll([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    if (landscapeOnly) orientations.addAll([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    if (orientations.isNotEmpty) SystemChrome.setPreferredOrientations(orientations);
 
     await Firebase.initializeApp();
 
     _setCrashlytics(main: () async {
-      runApp(app);
+      runApp(RaccoonModule(
+        child: EasyLocalization(
+          path: translationsPath,
+          supportedLocales: supportedLocales,
+          preloaderColor: Config.loadingColor,
+          child: app,
+        ),
+      ));
     });
   }
 

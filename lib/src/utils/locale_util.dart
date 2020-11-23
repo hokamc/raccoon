@@ -1,6 +1,6 @@
 import 'package:easy_localization/easy_localization.dart' as localization;
 import 'package:flutter/material.dart';
-import 'package:raccoon/raccoon.dart';
+import 'package:raccoon/src/core/config.dart';
 
 /// translate
 String tr(String key, {List<String> args}) {
@@ -11,14 +11,14 @@ class LocaleUtil {
   LocaleUtil._();
 
   static Locale locale() {
-    return NavUtil.key.currentContext.locale;
+    return Config.key.currentContext.locale;
   }
 
   static changeLocale(Locale locale) {
-    NavUtil.key.currentContext.locale = locale;
+    Config.key.currentContext.locale = locale;
   }
 
   static deleteLocale() {
-    NavUtil.key.currentContext.deleteSaveLocale();
+    Config.key.currentContext.deleteSaveLocale();
   }
 }

@@ -1,16 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:raccoon/src/core/config.dart';
 
 class NavUtil {
   NavUtil._();
 
-  static GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
-
-  static push(String name, [Object argument]) {
-    key.currentState.pushNamed(name, arguments: argument);
+  static void push(String name, {Object argument, Function() onBack}) {
+    Config.key.currentState.pushNamed(name, arguments: argument).then((value) => onBack?.call());
   }
 
-  static pop() {
-    key.currentState.pop();
+  static void pop<T>(T value) {
+    Config.key.currentState.pop(value);
   }
 }
